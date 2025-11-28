@@ -1,15 +1,23 @@
+#define MyAppName "Albarika Digital"
+#define MyAppVersion "1.0.0"
+#define MyAppPublisher "Albarika Digital"
+#define MyAppExeName "digitallab.exe"
+
 [Setup]
 AppId={{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}
-AppName=AlbarikaDigital
-AppVersion=1.0
+AppName={#MyAppName}
+AppVersion={#MyAppVersion}
+AppPublisher={#MyAppPublisher}
 DefaultDirName={autopf}\AlbarikaDigital
-DefaultGroupName=AlbarikaDigital
+DefaultGroupName=Albarika Digital
 OutputDir=.
-OutputBaseFilename=AlbarikaDigital
+OutputBaseFilename=AlbarikaDigitalSetup
 Compression=lzma
 SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64
 WizardStyle=modern
+; Uncomment the following line if you want to require admin rights
+; PrivilegesRequired=admin
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -23,10 +31,10 @@ Source: "build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignorever
 
 [Icons]
 ; Create Start Menu shortcut
-Name: "{group}\My Flutter App"; Filename: "{app}\your_app.exe"
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 ; Create Desktop shortcut (if user selected it)
-Name: "{autodesktop}\My Flutter App"; Filename: "{app}\your_app.exe"; Tasks: desktopicon
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
 ; Optionally launch the app after installation
-Filename: "{app}\your_app.exe"; Description: "Launch My Flutter App"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppExeName}"; Description: "Launch {#MyAppName}"; Flags: nowait postinstall skipifsilent
