@@ -51,3 +51,18 @@ jobs:
         name: windows-app-zip
         path: windows-app.zip
         retention-days: 30
+        
+    - name: Create Installer with Inno Setup
+      run: |
+        choco install innosetup -y
+        
+    - name: Build Installer
+      run: |
+        iscc /O"." /F"MyAppSetup" installer.iss
+      
+    - name: Upload Installer
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-installer
+        path: MyAppSetup.exe
+        retention-days: 30  
