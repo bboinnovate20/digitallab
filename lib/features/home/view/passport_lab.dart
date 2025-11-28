@@ -21,7 +21,7 @@ class _PassportLabState extends State<PassportLab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Passport Photo Lab')),
+      appBar: AppBar(title: const Text('Passport Photo Lab ')),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -29,9 +29,15 @@ class _PassportLabState extends State<PassportLab> {
             children: [
               const Padding(
                 padding: EdgeInsets.all(16.0),
-                child: Text(
-                  'Passport Photo Lab\n\nHere users will crop photos to passport sizes and prepare print layouts.\n(Placeholder screen)',
-                  textAlign: TextAlign.center,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('Passport Photo Lab', textAlign: TextAlign.center),
+                    Text(
+                      'Here users will crop photos to passport sizes and prepare print layouts.\n(Placeholder screen)',
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ),
               if (_imageFile != null) ...[
