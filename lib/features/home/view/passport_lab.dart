@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:digitallab/core/ui/primary_btn.dart';
 import 'package:digitallab/features/home/view_model/photolab_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 class PassportLab extends StatefulWidget {
   const PassportLab({super.key});
@@ -15,8 +14,16 @@ class PassportLab extends StatefulWidget {
 class _PassportLabState extends State<PassportLab> {
   final PhotolabViewModel _photolabModel = PhotolabViewModel();
 
-  File? _imageFile;
-  final bool _loading = false;
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _photolabModel.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,30 +47,63 @@ class _PassportLabState extends State<PassportLab> {
                   ],
                 ),
               ),
-              if (_imageFile != null) ...[
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 8.0,
+              AnimatedBuilder(
+                animation: _photolabModel,
+                builder: (context, child) {
+                  final file = _photolabModel.currentImage;
+                  if (file == null) return const SizedBox.shrink();
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                    child: Image.file(
+                      file.file,
+                      width: 260,
+                      height: 260,
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: AnimatedBuilder(
+                      animation: _photolabModel,
+                      builder: (context, child) {
+                        return PrimaryButton(
+                          label: _photolabModel.currentImage == null
+                              ? 'Upload Passport'
+                              : 'Replace Passport',
+                          onPressed: _photolabModel.isLoading
+                              ? null
+                              : _photolabModel.pickImage,
+                          leading: const Icon(Icons.upload_file),
+                          loading: _photolabModel.isLoading,
+                        );
+                      },
+                    ),
                   ),
-                  child: Image.file(
-                    _imageFile!,
-                    width: 260,
-                    height: 260,
-                    fit: BoxFit.cover,
+                  AnimatedBuilder(
+                    animation: _photolabModel,
+                    builder: (context, child) {
+                      if (_photolabModel.currentImage == null)
+                        return const SizedBox.shrink();
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: PrimaryButton(
+                          label: 'Process / Upload',
+                          onPressed: _photolabModel.isLoading ? null : () => {},
+                          leading: const Icon(Icons.cloud_upload),
+                          loading: _photolabModel.isLoading,
+                        ),
+                      );
+                    },
                   ),
-                ),
-              ],
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: PrimaryButton(
-                  label: _imageFile == null
-                      ? 'Upload Passport'
-                      : 'Replace Passport',
-                  onPressed: _loading ? null : _photolabModel.pickImage(),
-                  leading: const Icon(Icons.upload_file),
-                  loading: _loading,
-                ),
+                ],
               ),
             ],
           ),

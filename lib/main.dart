@@ -1,7 +1,13 @@
+import 'package:digitallab/core/services/init.dart';
 import 'package:flutter/material.dart';
 import 'package:digitallab/features/home/view/dashboard.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import 'package:toastification/toastification.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // final initPython = PythonImpl();
+  // await initPython.init();
   runApp(const MyApp());
 }
 
@@ -11,12 +17,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+    return ToastificationWrapper(
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        ),
+        home: LoaderOverlay(child: MyHomePage(title: 'New ')),
       ),
-      home: const MyHomePage(title: 'New '),
     );
   }
 }

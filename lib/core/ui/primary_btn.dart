@@ -15,12 +15,14 @@ class PrimaryButton extends StatelessWidget {
   final bool loading;
   final ButtonStyle? style;
   final EdgeInsetsGeometry padding;
+  final bool enabled;
 
   const PrimaryButton({
     super.key,
     required this.label,
     this.onPressed,
     this.leading,
+    this.enabled = true,
     this.loading = false,
     this.style,
     this.padding = const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),

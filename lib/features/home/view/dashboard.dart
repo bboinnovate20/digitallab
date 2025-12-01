@@ -1,6 +1,8 @@
+import 'package:digitallab/features/home/view/image_optimizer.dart';
 import 'package:flutter/material.dart';
 import 'package:digitallab/features/home/view/photo_edit_lab.dart';
 import 'package:digitallab/features/home/view/passport_lab.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -19,7 +21,7 @@ class DashboardScreen extends StatelessWidget {
           const SizedBox(height: 16),
           Expanded(
             child: GridView.count(
-              crossAxisCount: 2,
+              crossAxisCount: 4,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
               children: [
@@ -40,6 +42,19 @@ class DashboardScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const PassportLab()),
+                    );
+                  },
+                ),
+                _FeatureCard(
+                  icon: Icons.credit_card,
+                  title: 'Image Optimizer',
+                  subtitle: 'Reduce your Image',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            const LoaderOverlay(child: ImageOptimizer()),
+                      ),
                     );
                   },
                 ),
