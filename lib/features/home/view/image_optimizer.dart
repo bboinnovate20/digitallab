@@ -188,13 +188,11 @@ class _PassportLabState extends State<ImageOptimizer> {
                             color: Colors.blue,
                             label: "Reduce Image",
                             onPressed: () {
+                              print(sizeInputController.text);
                               try {
-                                _photolabModel.reduceImageSize(
-                                  targetSize: double.parse(
-                                    sizeInputController.text,
-                                  ),
-                                );
+                                _photolabModel.reduceImageSize();
                               } catch (e) {
+                                print(e);
                                 toastification.show(
                                   type: ToastificationType.error,
                                   title: const Text(

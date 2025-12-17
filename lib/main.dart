@@ -19,14 +19,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ToastificationWrapper(
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Albarika',
         debugShowCheckedModeBanner: false,
 
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        home: LoaderOverlay(child: MyHomePage(title: 'New ')),
+        home: LoaderOverlay(child: MyHomePage(title: 'Albarika Computer')),
       ),
     );
   }

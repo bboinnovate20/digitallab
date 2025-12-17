@@ -43,6 +43,7 @@ dependencies:
   image: ^4.3.0
   loader_overlay: ^5.0.0
   toastification: ^3.0.3
+  image_background_remover: ^0.0.5
 
 
 dev_dependencies:

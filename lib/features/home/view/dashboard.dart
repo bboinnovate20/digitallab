@@ -1,4 +1,5 @@
 import 'package:digitallab/features/home/view/image_optimizer.dart';
+import 'package:digitallab/features/remove_background/view/remove_bg.dart';
 import 'package:flutter/material.dart';
 import 'package:digitallab/features/home/view/photo_edit_lab.dart';
 import 'package:digitallab/features/home/view/passport_lab.dart';
@@ -25,26 +26,26 @@ class DashboardScreen extends StatelessWidget {
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
               children: [
-                _FeatureCard(
-                  icon: Icons.photo_camera_back_outlined,
-                  title: 'Photo Editing Lab',
-                  subtitle: 'Edit photos, remove background',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const PhotoEditLab()),
-                    );
-                  },
-                ),
-                _FeatureCard(
-                  icon: Icons.credit_card,
-                  title: 'Passport Photo Lab',
-                  subtitle: 'Crop & size for passport prints',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const PassportLab()),
-                    );
-                  },
-                ),
+                // _FeatureCard(
+                //   icon: Icons.photo_camera_back_outlined,
+                //   title: 'Photo Editing Lab',
+                //   subtitle: 'Edit photos, remove background',
+                //   onTap: () {
+                //     Navigator.of(context).push(
+                //       MaterialPageRoute(builder: (_) => const PhotoEditLab()),
+                //     );
+                //   },
+                // ),
+                // _FeatureCard(
+                //   icon: Icons.credit_card,
+                //   title: 'Passport Photo Lab',
+                //   subtitle: 'Crop & size for passport prints',
+                //   onTap: () {
+                //     Navigator.of(context).push(
+                //       MaterialPageRoute(builder: (_) => const PassportLab()),
+                //     );
+                //   },
+                // ),
                 _FeatureCard(
                   icon: Icons.credit_card,
                   title: 'Image Optimizer',
@@ -54,6 +55,19 @@ class DashboardScreen extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (_) =>
                             const LoaderOverlay(child: ImageOptimizer()),
+                      ),
+                    );
+                  },
+                ),
+                _FeatureCard(
+                  icon: Icons.credit_card,
+                  title: 'Remove Background',
+                  subtitle: 'Reduce your Image',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            const LoaderOverlay(child: RemoveBackground()),
                       ),
                     );
                   },
