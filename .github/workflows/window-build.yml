@@ -1,4 +1,3 @@
-
 name: Build Flutter Windows App
 
 on:
@@ -6,64 +5,111 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch:  # Allows manual triggering
+  workflow_dispatch:
+
+env:
+  FLUTTER_VERSION: "3.24.5"
+  LLVM_VERSION: "15.0.6"
+  VCPKG_COMMIT_ID: "1de2026f28ead93ff1773e6e680387643e914ea1"
+  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
 
 jobs:
   build-windows:
     runs-on: windows-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        # flutter-version: '3.38.3'  
-        flutter-version: '2.10.5'  
-        channel: 'stable'
-        cache: true
-        
-    - name: Enable Windows Desktop
-      run: flutter config --enable-windows-desktop
-      
-    - name: Install dependencies
-      run: flutter pub get
-      
-    - name: Build Windows app
-      run: flutter build windows --release
-      
-    - name: Archive Windows build
-      uses: actions/upload-artifact@v4
-      with:
-        name: windows-release
-        path: build/windows/x64/runner/Release/
-        retention-days: 30
-        
-    # Optional: Create a zip file of the release
-    - name: Create zip archive
-      run: |
-        cd build/windows/x64/runner/Release
-        Compress-Archive -Path * -DestinationPath ../../../../../windows-app.zip
-        
-    - name: Upload zip artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: windows-app-zip
-        path: windows-app.zip
-        retention-days: 30
-        
-    - name: Create Installer with Inno Setup
-      run: |
-        choco install innosetup -y
-        
-    - name: Build Installer
-      run: |
-        iscc /O"." /F"MyAppSetup" installer.iss
-      
-    - name: Upload Installer
-      uses: actions/upload-artifact@v4
-      with:
-        name: windows-installer
-        path: MyAppSetup.exe
-        retention-days: 30  
+      - name: Export GitHub Actions cache environment variables
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v1
+        with:
+          version: ${{ env.LLVM_VERSION }}
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2.12.0
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Replace engine with rustdesk custom flutter engine
+        run: |
+          flutter doctor -v
+          flutter precache --windows
+          Invoke-WebRequest -Uri https://github.com/rustdesk/engine/releases/download/main/windows-x64-release.zip -OutFile windows-x64-release.zip
+          Expand-Archive -Path windows-x64-release.zip -DestinationPath windows-x64-release
+          mv -Force windows-x64-release/* C:/hostedtoolcache/windows/flutter/stable-${{ env.FLUTTER_VERSION }}-x64/bin/cache/artifacts/engine/windows-x64-release/
+
+      - name: Patch flutter
+        shell: bash
+        run: |
+          cp .github/patches/flutter_3.24.4_dropdown_menu_enableFilter.diff $(dirname $(dirname $(which flutter)))
+          cd $(dirname $(dirname $(which flutter)))
+          [[ "${{ env.FLUTTER_VERSION }}" == "3.24.5" ]] && git apply flutter_3.24.4_dropdown_menu_enableFilter.diff
+
+      # Optional: Setup vcpkg for native dependencies
+      - name: Setup vcpkg with Github Actions binary cache
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgDirectory: C:\vcpkg
+          vcpkgGitCommitId: ${{ env.VCPKG_COMMIT_ID }}
+          doNotCache: false
+
+      - name: Enable Windows Desktop
+        run: flutter config --enable-windows-desktop
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Windows app
+        run: flutter build windows --release
+
+      - name: Create organized release folder
+        run: |
+          New-Item -ItemType Directory -Force -Path release
+          Copy-Item -Path build/windows/x64/runner/Release/* -Destination release/ -Recurse
+
+      - name: Archive Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-release
+          path: release/
+          retention-days: 30
+
+      - name: Create zip archive
+        run: |
+          Compress-Archive -Path release/* -DestinationPath windows-app.zip
+
+      - name: Upload zip artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-app-zip
+          path: windows-app.zip
+          retention-days: 30
+
+      # Optional: Build installer if you have installer.iss configured
+      - name: Install Inno Setup
+        if: hashFiles('installer.iss') != ''
+        run: |
+          choco install innosetup -y
+
+      - name: Build Installer
+        if: hashFiles('installer.iss') != ''
+        run: |
+          iscc /O"." /F"MyAppSetup" installer.iss
+
+      - name: Upload Installer
+        if: hashFiles('installer.iss') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: MyAppSetup.exe
+          retention-days: 30
