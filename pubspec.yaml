@@ -39,18 +39,17 @@ dependencies:
   cupertino_icons: ^1.0.8
   image_picker: ^0.8.7+4
   file_picker: ^10.3.7
-  python_ffi: ^0.4.4
+  python_ffi: ^0.3.0
   image: ^4.3.0
   loader_overlay: ^5.0.0
   toastification: ^3.0.3
-  image_background_remover: ^0.0.5
-
+  image_background_remover: ^1.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
+  # The " _lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
